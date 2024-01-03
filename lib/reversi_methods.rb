@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './position'
+require 'debug'
 
 module ReversiMethods
   WHITE_STONE = 'W'
@@ -44,6 +45,7 @@ module ReversiMethods
     pos = Position.new(cell_ref)
     raise '無効なポジションです' if pos.invalid?
     raise 'すでに石が置かれています' unless pos.stone_color(board) == BLANK_CELL
+    # binding.break
 
     # コピーした盤面にて石の配置を試みて、成功すれば反映する
     copied_board = Marshal.load(Marshal.dump(board))
