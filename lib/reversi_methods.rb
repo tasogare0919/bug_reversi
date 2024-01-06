@@ -76,23 +76,9 @@ module ReversiMethods
   end
 
   def finished?(board)
-    !placeable?(board, WHITE_STONE) && !placeable?(board, BLACK_STONE)
+    !placeable?(board, WHITE_STONE) && !placeable?(board, BLACK_STONE) || !board.flatten.include?(BLANK_CELL)
   end
   
-  def placeable?(board, attack_stone_color)
-    board.each_with_index do |cols, row|
-      cols.each_with_index do |cell, col|
-        next unless cell == BLANCK_CELL
-        position = Position.new(row, col)
-        return true if put_stone(board, position.to_cell_ref, attack_stone_color, dry_run: true)
-      end
-    end
-  end
-
-  def finished?(board)
-    !placeable?(board, WHITE_STONE) && !placeable?(board, BLACK_STONE)
-  end
-
   def placeable?(board, attack_stone_color)
     board.each_with_index do |cols, row|
       cols.each_with_index do |cell, col|
