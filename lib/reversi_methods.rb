@@ -41,25 +41,25 @@ module ReversiMethods
     end
   end
 
-  def put_stone(board, cell_ref, stone_color, dry_run: false)
-    pos = Position.new(cell_ref)
-    raise '無効なポジションです' if pos.invalid?
-    raise 'すでに石が置かれています' unless pos.stone_color(board) == BLANK_CELL
-    # binding.break
 
-    # コピーした盤面にて石の配置を試みて、成功すれば反映する
-    copied_board = Marshal.load(Marshal.dump(board))
-    copied_board[pos.col][pos.row] = stone_color
 
-    turn_succeed = false
-    Position::DIRECTIONS.each do |direction|
-      next_pos = pos.next_position(direction)
-      turn_succeed = true if turn(copied_board, next_pos, stone_color, direction)
-    end
+  def put_stone(board, cell_ref, stone_color, dry_run:false)
+      pos = Position.new(cell_ref)
+      raise '無効なポジションです' if pos.invalid?
+      raise '既に石が置かれています' unless pos.stone_color(board) == BLANK_CELL
 
-    copy_board(board, copied_board) if !dry_run && turn_succeed
+      copied_board = Marshal.load(Marshal.dump(board))
+      copied_board[pos.row][pos.col] = stone_color
+      turn_succeded = false
+      Position::DIRECTIONS.each do |direction|
+        next_pos = pos.next_position(direction)
+        turn_succeded = true if turn(copied_board, next_pos, stone_color, direction)
+      end
 
-    turn_succeed
+      copy_board(board, copied_board) if !dry_run && turn_succeded
+      print "turn_succeded: #{turn_succeded}\n"
+
+      turn_succeded
   end
 
   def turn(board, target_pos, attack_stone_color, direction)
@@ -78,12 +78,25 @@ module ReversiMethods
   def finished?(board)
     !placeable?(board, WHITE_STONE) && !placeable?(board, BLACK_STONE)
   end
+  
+  def placeable?(board, attack_stone_color)
+    board.each_with_index do |cols, row|
+      cols.each_with_index do |cell, col|
+        next unless cell == BLANCK_CELL
+        position = Position.new(row, col)
+        return true if put_stone(board, position.to_cell_ref, attack_stone_color, dry_run: true)
+      end
+    end
+  end
+
+  def finished?(board)
+    !placeable?(board, WHITE_STONE) && !placeable?(board, BLACK_STONE)
+  end
 
   def placeable?(board, attack_stone_color)
     board.each_with_index do |cols, row|
       cols.each_with_index do |cell, col|
         next unless cell == BLANK_CELL
-
         position = Position.new(row, col)
         return true if put_stone(board, position.to_cell_ref, attack_stone_color, dry_run: true)
       end
