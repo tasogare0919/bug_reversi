@@ -41,12 +41,10 @@ module ReversiMethods
     end
   end
 
-
-
   def put_stone(board, cell_ref, stone_color, dry_run:false)
       pos = Position.new(cell_ref)
       raise '無効なポジションです' if pos.invalid?
-      raise '既に石が置かれています' unless pos.stone_color(board) == BLANK_CELL
+      raise 'すでに石が置かれています' unless pos.stone_color(board) == BLANK_CELL
 
       copied_board = Marshal.load(Marshal.dump(board))
       copied_board[pos.row][pos.col] = stone_color
@@ -56,18 +54,17 @@ module ReversiMethods
         turn_succeded = true if turn(copied_board, next_pos, stone_color, direction)
       end
 
-      copy_board(board, copied_board) if !dry_run && turn_succeded
-      print "turn_succeded: #{turn_succeded}\n"
-
+      copy_board(board, copied_board) if !dry_run && turn_succeded 
       turn_succeded
   end
 
   def turn(board, target_pos, attack_stone_color, direction)
     return false if target_pos.out_of_board?
     return false if target_pos.stone_color(board) == attack_stone_color
+    return false if target_pos.stone_color(board) == BLANK_CELL
 
     next_pos = target_pos.next_position(direction)
-    if (next_pos.stone_color(board) == attack_stone_color) || turn(board, next_pos, attack_stone_color, direction)
+    if (next_pos.stone_color(board) == attack_stone_color) || turn(board, next_pos, attack_stone_color, direction) 
       board[target_pos.row][target_pos.col] = attack_stone_color
       true
     else
@@ -76,7 +73,7 @@ module ReversiMethods
   end
 
   def finished?(board)
-    !placeable?(board, WHITE_STONE) && !placeable?(board, BLACK_STONE) || !board.flatten.include?(BLANK_CELL)
+    !placeable?(board, WHITE_STONE) && !placeable?(board, BLACK_STONE) || count_stone(board, BLANK_CELL) == 0
   end
   
   def placeable?(board, attack_stone_color)
