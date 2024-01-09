@@ -23,7 +23,6 @@ class Position
       # Position.new(1, 5) のような呼び出し
       @row = row_or_cell_ref
       @col = col
-      
     else
       # Position.new('f7')のような呼び出し
       @row = ROW.index(row_or_cell_ref[1])
@@ -41,11 +40,13 @@ class Position
 
   def stone_color(board)
     return nil if out_of_board?
+
     board[row][col]
   end
 
   def to_cell_ref
     return '盤面外' if out_of_board?
+    
     "#{COL[col]}#{ROW[row]}"
   end
 
