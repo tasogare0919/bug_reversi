@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative './position'
-require 'debug'
 
 module ReversiMethods
   WHITE_STONE = 'W'
@@ -75,7 +74,7 @@ module ReversiMethods
   def finished?(board)
     !placeable?(board, WHITE_STONE) && !placeable?(board, BLACK_STONE) || count_stone(board, BLANK_CELL) == 0 || count_stone(board, WHITE_STONE) == 0 || count_stone(board, BLACK_STONE) == 0 
   end
-  
+
   def placeable?(board, attack_stone_color)
     board.each_with_index do |cols, row|
       cols.each_with_index do |cell, col|
