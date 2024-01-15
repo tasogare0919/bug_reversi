@@ -87,7 +87,7 @@ module ReversiMethods
         return true if put_stone(board, position.to_cell_ref, attack_stone_color, dry_run: true)
       end
     end
-    return false
+    false
   end
 
   def count_stone(board, stone_color)
